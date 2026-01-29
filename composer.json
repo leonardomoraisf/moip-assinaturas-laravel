@@ -12,23 +12,19 @@
   "repositories": [
     {
         "type": "github",
-        "url": "https://github.com/REPO-BITIS/moip-assinaturas-php.git"
+        "url": "https://github.com/leonardomoraisf/moip-assinaturas-php.git"
     }
   ],
   "require": {
-    "php": ">=5.4.0",
-    "illuminate/support": "^6.0",
-    "prettus/moip-assinaturas-php":"dev-master"
-  },
-  "require-dev": {
-    "phpunit/phpunit": "~4.0",
-    "phpspec/phpspec": "~2.1"
+    "php": "^8.2",
+    "laravel/framework": "^10.0",
+    "prettus/moip-assinaturas-php": "dev-master"
   },
   "autoload": {
-    "psr-0": {
-      "Prettus\\MoipLaravel\\Subscription": "src/",
-      "Prettus\\MoipLaravel\\Subscription\\Test": "tests/"
+    "psr-4": {
+      "Prettus\\MoipLaravel\\": "Subscription/"
     }
   },
-  "minimum-stability": "stable"
+  "minimum-stability": "dev",
+  "prefer-stable": true
 }
