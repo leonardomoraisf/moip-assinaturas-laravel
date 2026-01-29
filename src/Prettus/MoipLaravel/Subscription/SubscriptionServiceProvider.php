@@ -1,65 +1,49 @@
-<?php namespace Prettus\MoipLaravel\Subscription;
+<?php
+
+namespace Prettus\MoipLaravel\Subscription;
 
 use Illuminate\Support\ServiceProvider;
 use Prettus\Moip\Subscription\Api;
 use Prettus\Moip\Subscription\MoipClient;
 
-/**
- * Class SubscriptionServiceProvider
- * @package Prettus\MoipLaravel\Subscription
- */
-class SubscriptionServiceProvider extends ServiceProvider {
-
-    /**
-     *
-     */
-    public function register()
+class SubscriptionServiceProvider extends ServiceProvider
+{
+    public function register(): void
     {
-    }
+        // Merge config
+        $this->mergeConfigFrom(
+            __DIR__ . '/../config/moip-assinaturas.php',
+            'moip-assinaturas'
+        );
 
-    /**
-     *
-     */
-    public function boot()
-    {
-        $this->app->singleton('moip-client', function(){
+        // Client
+        $this->app->singleton('moip-client', function () {
             return new MoipClient(
                 config('moip-assinaturas.api_token'),
                 config('moip-assinaturas.api_key'),
-                config('moip-assinaturas.environment','api')
+                config('moip-assinaturas.environment', 'api')
             );
         });
 
-        $this->app->singleton('moip-api', function(){
-            return new Api( app('moip-client') );
+        // API
+        $this->app->singleton('moip-api', function ($app) {
+            return new Api($app->make('moip-client'));
         });
 
-        $this->app->bind('moip-plans', function(){
-            return app('moip-api')->plans();
-        });
+        // Facade bindings
+        $this->app->bind('moip-plans', fn ($app) => $app->make('moip-api')->plans());
+        $this->app->bind('moip-subscriptions', fn ($app) => $app->make('moip-api')->subscriptions());
+        $this->app->bind('moip-customers', fn ($app) => $app->make('moip-api')->customers());
+        $this->app->bind('moip-invoices', fn ($app) => $app->make('moip-api')->invoices());
+        $this->app->bind('moip-preferences', fn ($app) => $app->make('moip-api')->preferences());
+        $this->app->bind('moip-payments', fn ($app) => $app->make('moip-api')->payments());
+    }
 
-        $this->app->bind('moip-subscriptions', function(){
-            return app('moip-api')->subscriptions();
-        });
-
-        $this->app->bind('moip-customers', function(){
-            return app('moip-api')->customers();
-        });
-
-        $this->app->bind('moip-invoices', function(){
-            return app('moip-api')->invoices();
-        });
-
-        $this->app->bind('moip-preferences', function(){
-            return app('moip-api')->preferences();
-        });
-
-        $this->app->bind('moip-payments', function(){
-            return app('moip-api')->payments();
-        });
-
+    public function boot(): void
+    {
+        // Publish config
         $this->publishes([
-            __DIR__.'/../../../config/moip-assinaturas.php' => config_path('moip-assinaturas.php'),
-        ]);
+            __DIR__ . '/../config/moip-assinaturas.php' => config_path('moip-assinaturas.php'),
+        ], 'moip-config');
     }
 }

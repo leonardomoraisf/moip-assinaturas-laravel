@@ -22,9 +22,8 @@
   },
   "autoload": {
     "psr-4": {
-      "Prettus\\MoipLaravel\\": "Subscription/"
+      "Prettus\\MoipLaravel\\": "src/Prettus/MoipLaravel/"
     }
   },
-  "minimum-stability": "dev",
-  "prefer-stable": true
+  "minimum-stability": "stable"
 }
